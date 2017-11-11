@@ -61,6 +61,11 @@ public:
     bool proceed(int wait_timeout_ms = 0);
     bool accept(generic_socket&);
 
+    internet_protocol_t get_internet_protocol() const;
+    transport_protocol_t get_transport_protocol() const;
+
+    bool export_peer(ip_address*, unsigned short*) const;
+
     int send(const void*, size_t);
     int recv(void*, size_t);
 

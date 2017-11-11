@@ -81,6 +81,14 @@ int ipv6_address::get_type() const
 
 //------------------------------------------------------------------------------
 
+std::string ipv6_address::to_string() const
+{
+    char str[INET6_ADDRSTRLEN];
+    return (inet_ntop(AF_INET6, impl, str, INET6_ADDRSTRLEN)) ? std::string(str) : std::string();
+}
+
+//------------------------------------------------------------------------------
+
 bool ipv6_address::retrieve_platform_implementation(void* buffer, size_t buffer_size) const
 {
     if (!impl)
@@ -133,6 +141,17 @@ ipv6_address ipv6_address::any()
     ipv6_address address;
     address.impl = new struct ::in6_addr(::in6addr_any);
     return address;
+}
+
+//------------------------------------------------------------------------------
+
+bool ipv6_address::set_raw(void* addr, size_t addrlen)
+{
+    if (((::sockaddr_storage*)addr)->ss_family != AF_INET6)
+        return false;
+    delete impl;
+    impl = new struct ::in6_addr(((::sockaddr_in6*)addr)->sin6_addr);
+    return true;
 }
 
 //------------------------------------------------------------------------------

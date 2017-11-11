@@ -15,6 +15,7 @@ public:
     virtual ~ipv4_address();
     virtual int get_family() const override;
     virtual int get_type() const override;
+    virtual std::string to_string() const override;
 
     inline ipv4_address() {}
     ipv4_address(const char*);
@@ -27,6 +28,9 @@ public:
     ipv4_address& operator=(ipv4_address&&);
 
     static ipv4_address any();
+
+private:
+    virtual bool set_raw(void* addr, size_t addrlen) override;
 
 private:
     struct ::in_addr* impl = nullptr;

@@ -59,6 +59,8 @@ public:
     size_t get_message_count() const;
     const std::pair<client_id, std::string>& get_message(size_t index) const;
 
+    generic_socket* find_socket(client_id);
+
 public:
     void disconnect_user(client_id);
 

@@ -81,6 +81,14 @@ int ipv4_address::get_type() const
 
 //------------------------------------------------------------------------------
 
+std::string ipv4_address::to_string() const
+{
+    char str[INET_ADDRSTRLEN];
+    return (inet_ntop(AF_INET, impl, str, INET_ADDRSTRLEN)) ? std::string(str) : std::string();
+}
+
+//------------------------------------------------------------------------------
+
 bool ipv4_address::retrieve_platform_implementation(void* buffer, size_t buffer_size) const
 {
     if (!impl)
@@ -91,7 +99,6 @@ bool ipv4_address::retrieve_platform_implementation(void* buffer, size_t buffer_
 
     memcpy(buffer, impl, sizeof(*impl));
     return true;
-
 }
 
 //------------------------------------------------------------------------------
@@ -135,6 +142,17 @@ ipv4_address ipv4_address::any()
     address.impl = new struct ::in_addr();
     address.impl->s_addr = htonl(INADDR_ANY);
     return address;
+}
+
+//------------------------------------------------------------------------------
+
+bool ipv4_address::set_raw(void* addr, size_t addrlen)
+{
+    if (((::sockaddr_storage*)addr)->ss_family != AF_INET)
+        return false;
+    delete impl;
+    impl = new struct ::in_addr(((::sockaddr_in*)addr)->sin_addr);
+    return true;
 }
 
 //------------------------------------------------------------------------------

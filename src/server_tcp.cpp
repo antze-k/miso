@@ -259,6 +259,20 @@ size_t server_tcp::get_message_count() const
 
 //------------------------------------------------------------------------------
 
+generic_socket* server_tcp::find_socket(client_id id)
+{
+    if (!m_swarm)
+        return nullptr;
+
+    auto found = std::find_if(m_swarm->clients.begin(), m_swarm->clients.end(), [&id](node_tcp& client) { return client.id == id; });
+    if (found == m_swarm->clients.end())
+        return nullptr;
+
+    return &found->socket;
+}
+
+//------------------------------------------------------------------------------
+
 const std::pair<server_tcp::client_id, std::string>& server_tcp::get_message(size_t index) const
 {
     static const std::pair<client_id, std::string> invalid_message({ invalid_client(), std::string() });

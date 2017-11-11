@@ -59,6 +59,18 @@ inline int to_api_family(::miso::internet_protocol_t internet_protocol)
 
 //------------------------------------------------------------------------------
 
+inline ::miso::internet_protocol_t from_api_family(int af)
+{
+    switch (af)
+    {
+        case AF_INET: return ::miso::ipv4;
+        case AF_INET6: return ::miso::ipv6;
+        default: return (::miso::internet_protocol_t)-1;
+    }
+}
+
+//------------------------------------------------------------------------------
+
 inline int to_socket_type(::miso::transport_protocol_t transport_protocol)
 {
     switch (transport_protocol)
@@ -66,6 +78,18 @@ inline int to_socket_type(::miso::transport_protocol_t transport_protocol)
         case ::miso::tcp: return SOCK_STREAM;
         case ::miso::udp: return SOCK_DGRAM;
         default: return -1;
+    }
+}
+
+//------------------------------------------------------------------------------
+
+inline ::miso::transport_protocol_t from_socket_type(int type)
+{
+    switch (type)
+    {
+        case SOCK_STREAM: return ::miso::tcp;
+        case SOCK_DGRAM: return ::miso::udp;
+        default: return (::miso::transport_protocol_t)-1;
     }
 }
 
@@ -80,6 +104,19 @@ inline int to_protocol(::miso::transport_protocol_t transport_protocol)
         default: return -1;
     }
 }
+
+//------------------------------------------------------------------------------
+
+inline ::miso::transport_protocol_t from_protocol(int proto)
+{
+    switch (proto)
+    {
+        case IPPROTO_TCP: return ::miso::tcp;
+        case IPPROTO_UDP: return ::miso::udp;
+        default: return (::miso::transport_protocol_t)-1;
+    }
+}
+
 //------------------------------------------------------------------------------
 }
 
@@ -211,6 +248,41 @@ struct generic_socket::node
         if (::getsockopt(sock, SOL_SOCKET, SO_ERROR, (char*)&error, &error_size) < 0)
             return -1;
         return error;
+    }
+
+    inline bool export_peer(ip_address* addr, unsigned short* port) const throw()
+    {
+        if (addr && addr->get_family() != config.af)
+            return false;
+
+        switch (config.af)
+        {
+            default: break;
+            case AF_INET:
+            {
+                struct ::sockaddr_storage ss;
+                ::socklen_t sl = sizeof(::sockaddr_storage);
+                if (::getpeername(sock, (struct ::sockaddr*)&ss, &sl) < 0) return false;
+                bool ok = true;
+                if (addr && !addr->set_raw(&ss, sl)) ok = false;
+                if (port) *port = ntohs(((struct ::sockaddr_in*)&ss)->sin_port);
+                return ok;
+            }
+            break;
+
+            case AF_INET6:
+            {
+                struct ::sockaddr_storage ss;
+                ::socklen_t sl = sizeof(::sockaddr_storage);
+                if (::getpeername(sock, (struct ::sockaddr*)&ss, &sl) < 0) return false;
+                bool ok = true;
+                if (addr && !addr->set_raw(&ss, sl)) ok = false;
+                if (port) *port = ntohs(((struct ::sockaddr_in6*)&ss)->sin6_port);
+                return ok;
+            }
+            break;
+        }
+        return false;
     }
 };
 
@@ -590,6 +662,27 @@ bool generic_socket::accept(generic_socket& accepted)
     accepted.m_status.up = true;
     return true;
 
+}
+
+//------------------------------------------------------------------------------
+
+internet_protocol_t generic_socket::get_internet_protocol() const
+{
+    return m_node ? from_api_family(m_node->config.af) : (internet_protocol_t)-1;
+}
+
+//------------------------------------------------------------------------------
+
+transport_protocol_t generic_socket::get_transport_protocol() const
+{
+    return m_node ? from_protocol(m_node->config.proto) : (transport_protocol_t)-1;
+}
+
+//------------------------------------------------------------------------------
+
+bool generic_socket::export_peer(ip_address* addr, unsigned short* port) const
+{
+    return m_node ? m_node->export_peer(addr, port) : false;
 }
 
 //------------------------------------------------------------------------------
