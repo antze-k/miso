@@ -149,7 +149,7 @@ struct node_tcp
         if (sent < 0)
             return false;
 
-        if (sent == size)
+        if ((size_t)sent == size)
             return true;
 
         return out.push((const char*)data + sent, size - sent);

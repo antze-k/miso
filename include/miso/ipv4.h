@@ -13,7 +13,7 @@ class ipv4_address : public ip_address
 {
 public:
     virtual ~ipv4_address();
-    virtual unsigned int get_family() const override;
+    virtual int get_family() const override;
     virtual int get_type() const override;
 
     inline ipv4_address() {}

@@ -309,7 +309,7 @@ bool generic_socket::connect(const ip_address& address, unsigned short port)
         case AF_INET:
         {
             struct sockaddr_in sa = {0};
-            sa.sin_family   = address.get_family();
+            sa.sin_family   = static_cast<decltype(sa.sin_family)>((unsigned int)address.get_family());
             sa.sin_port     = htons(port);
             static_cast<const ipv4_address&>(address)
                 .retrieve_platform_implementation(&sa.sin_addr, sizeof(sa.sin_addr));
@@ -321,7 +321,7 @@ bool generic_socket::connect(const ip_address& address, unsigned short port)
         case AF_INET6:
         {
             struct sockaddr_in6 sa = {0};
-            sa.sin6_family  = address.get_family();
+            sa.sin6_family  = static_cast<decltype(sa.sin6_family)>((unsigned int)address.get_family());
             sa.sin6_port    = htons(port);
             static_cast<const ipv6_address&>(address)
                 .retrieve_platform_implementation(&sa.sin6_addr, sizeof(sa.sin6_addr));
@@ -382,7 +382,7 @@ bool generic_socket::listen(const ip_address& address, unsigned short port)
         case AF_INET:
         {
             struct sockaddr_in sa = {0};
-            sa.sin_family   = address.get_family();
+            sa.sin_family   = static_cast<decltype(sa.sin_family)>((unsigned int)address.get_family());
             sa.sin_port     = htons(port);
             static_cast<const ipv4_address&>(address)
                 .retrieve_platform_implementation(&sa.sin_addr, sizeof(sa.sin_addr));
@@ -394,7 +394,7 @@ bool generic_socket::listen(const ip_address& address, unsigned short port)
         case AF_INET6:
         {
             struct sockaddr_in6 sa = {0};
-            sa.sin6_family  = address.get_family();
+            sa.sin6_family  = static_cast<decltype(sa.sin6_family)>((unsigned int)address.get_family());
             sa.sin6_port    = htons(port);
             static_cast<const ipv6_address&>(address)
                 .retrieve_platform_implementation(&sa.sin6_addr, sizeof(sa.sin6_addr));

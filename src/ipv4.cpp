@@ -67,9 +67,9 @@ ipv4_address::~ipv4_address()
 
 //------------------------------------------------------------------------------
 
-unsigned int ipv4_address::get_family() const
+int ipv4_address::get_family() const
 {
-    return (unsigned int)AF_INET;
+    return (int)AF_INET;
 }
 
 //------------------------------------------------------------------------------

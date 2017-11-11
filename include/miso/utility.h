@@ -39,7 +39,7 @@ class ip_address
 {
 public:
     virtual ~ip_address() {}
-    virtual unsigned int get_family() const = 0;
+    virtual int get_family() const = 0;
     virtual int get_type() const = 0;
 };
 

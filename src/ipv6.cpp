@@ -67,9 +67,9 @@ ipv6_address::~ipv6_address()
 
 //------------------------------------------------------------------------------
 
-unsigned int ipv6_address::get_family() const
+int ipv6_address::get_family() const
 {
-    return (unsigned int)AF_INET6;
+    return (int)AF_INET6;
 }
 
 //------------------------------------------------------------------------------
