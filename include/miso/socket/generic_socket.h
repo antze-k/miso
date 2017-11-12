@@ -3,45 +3,9 @@
 #pragma once
 
 #include "miso/utility.h"
+#include "miso/socket/socketdef.h"
 
 namespace miso {
-//------------------------------------------------------------------------------
-
-enum internet_protocol_t
-{
-    ipv4,
-    ipv6,
-};
-
-//------------------------------------------------------------------------------
-
-enum transport_protocol_t
-{
-    tcp,
-    udp,
-};
-
-//------------------------------------------------------------------------------
-
-enum socket_mode_t
-{
-    blocking,
-    nonblocking,
-};
-
-//------------------------------------------------------------------------------
-
-enum socket_error_t
-{
-    error_none,
-    error_bad_alloc,
-    error_not_configured,
-    error_not_connected,
-    error_invalid_usage,
-    error_internal,
-    error_socket,
-};
-
 //------------------------------------------------------------------------------
 
 class generic_socket : public noncopyable

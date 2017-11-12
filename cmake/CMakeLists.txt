@@ -19,25 +19,19 @@ define_source_files(server)
 define_source_files(protocol)
 
 list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/ipv4.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/ipv6.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/platform.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/utility.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/ipv4.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/ipv6.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/platform.cpp")
 source_group("" FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/ipv4.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/ipv6.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/platform.h"
     "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/utility.h"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/ipv4.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/ipv6.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/../src/platform.cpp")
 list(APPEND SOURCE_FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/node_tcp.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/node_tcp.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/socket_tools.h")
 source_group(internal FILES
-    "${CMAKE_CURRENT_SOURCE_DIR}/../src/node_tcp.h")
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/node_tcp.h"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../src/socket_tools.h")
 
 include_directories("${MY_ROOT}/include")
 

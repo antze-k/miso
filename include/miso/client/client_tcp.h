@@ -3,6 +3,7 @@
 #pragma once
 
 #include "miso/utility.h"
+#include "miso/socket/socketdef.h"
 #include "miso/client/client_interface.h"
 
 #include <utility>

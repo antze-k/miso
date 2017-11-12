@@ -1,126 +1,31 @@
 // (C) unresolved-external@singu-lair.com released under the MIT license (see LICENSE)
 
 #include "miso/socket/generic_socket.h"
-#include "miso/ipv4.h"
-#include "miso/ipv6.h"
+#include "miso/socket/ipv4.h"
+#include "miso/socket/ipv6.h"
 #include <new>
 
 #if defined(WIN32) && !defined(MISO_DISABLE_AUTO_WINSOCK)
     #include "miso/platform.h"
 #endif
 
-namespace {
-//------------------------------------------------------------------------------
-
-#include <stddef.h>
-#include <string.h>
-
-#if defined(WIN32)
-    #include <WinSock2.h>
-    #include <ws2ipdef.h>
-    using internal_socket_t = SOCKET;
-    using socklen_t = int;
-    #define _SOCKERROR()    WSAGetLastError()
-    #define _EINPROGRESS    WSAEINPROGRESS
-    #define _EWOULDBLOCK    WSAEWOULDBLOCK
-    #define _EAGAIN         WSAEWOULDBLOCK
-#else
-    #include <arpa/inet.h>
-    #include <errno.h>
-    #include <fcntl.h>
-    #include <netdb.h>
-    #include <netinet/in.h>
-    #include <signal.h>
-    #include <string.h>
-    #include <sys/socket.h>
-    #include <sys/time.h>
-    #include <sys/types.h>
-    #include <time.h>
-    #include <unistd.h>
-    using internal_socket_t = int;
-    #define INVALID_SOCKET (int)(~0)
-    #define _SOCKERROR()    errno
-    #define _EINPROGRESS    EINPROGRESS
-    #define _EWOULDBLOCK    EWOULDBLOCK
-    #define _EAGAIN         EAGAIN
-#endif
-
-//------------------------------------------------------------------------------
-
-inline int to_api_family(::miso::internet_protocol_t internet_protocol)
-{
-    switch (internet_protocol)
-    {
-        case ::miso::ipv4: return AF_INET;
-        case ::miso::ipv6: return AF_INET6;
-        default: return AF_UNSPEC;
-    }
-}
-
-//------------------------------------------------------------------------------
-
-inline ::miso::internet_protocol_t from_api_family(int af)
-{
-    switch (af)
-    {
-        case AF_INET: return ::miso::ipv4;
-        case AF_INET6: return ::miso::ipv6;
-        default: return (::miso::internet_protocol_t)-1;
-    }
-}
-
-//------------------------------------------------------------------------------
-
-inline int to_socket_type(::miso::transport_protocol_t transport_protocol)
-{
-    switch (transport_protocol)
-    {
-        case ::miso::tcp: return SOCK_STREAM;
-        case ::miso::udp: return SOCK_DGRAM;
-        default: return -1;
-    }
-}
-
-//------------------------------------------------------------------------------
-
-inline ::miso::transport_protocol_t from_socket_type(int type)
-{
-    switch (type)
-    {
-        case SOCK_STREAM: return ::miso::tcp;
-        case SOCK_DGRAM: return ::miso::udp;
-        default: return (::miso::transport_protocol_t)-1;
-    }
-}
-
-//------------------------------------------------------------------------------
-
-inline int to_protocol(::miso::transport_protocol_t transport_protocol)
-{
-    switch (transport_protocol)
-    {
-        case ::miso::tcp: return IPPROTO_TCP;
-        case ::miso::udp: return IPPROTO_UDP;
-        default: return -1;
-    }
-}
-
-//------------------------------------------------------------------------------
-
-inline ::miso::transport_protocol_t from_protocol(int proto)
-{
-    switch (proto)
-    {
-        case IPPROTO_TCP: return ::miso::tcp;
-        case IPPROTO_UDP: return ::miso::udp;
-        default: return (::miso::transport_protocol_t)-1;
-    }
-}
-
-//------------------------------------------------------------------------------
-}
+#include "socket_tools.h"
 
 namespace miso {
+//------------------------------------------------------------------------------
+
+ip_address ipv4_address::any()
+{
+    return ip_address(&::in4addr_any, sizeof(struct ::in_addr));
+}
+
+//------------------------------------------------------------------------------
+
+ip_address ipv6_address::any()
+{
+    return ip_address(&::in6addr_any, sizeof(struct ::in6_addr));
+}
+
 //------------------------------------------------------------------------------
 
 struct generic_socket::node
@@ -330,9 +235,9 @@ bool generic_socket::configure(internet_protocol_t internet_protocol, transport_
         return false;
     }
 
-    m_node->config.af = to_api_family(internet_protocol);
-    m_node->config.type = to_socket_type(transport_protocol);
-    m_node->config.proto = to_protocol(transport_protocol);
+    m_node->config.af = tools::to_api_family(internet_protocol);
+    m_node->config.type = tools::to_socket_type(transport_protocol);
+    m_node->config.proto = tools::to_protocol(transport_protocol);
     m_node->config.socket_mode = socket_mode;
     m_node->config.reuse_addr = reuse_addr;
 
@@ -383,8 +288,7 @@ bool generic_socket::connect(const ip_address& address, unsigned short port)
             struct sockaddr_in sa = {0};
             sa.sin_family   = static_cast<decltype(sa.sin_family)>((unsigned int)address.get_family());
             sa.sin_port     = htons(port);
-            static_cast<const ipv4_address&>(address)
-                .retrieve_platform_implementation(&sa.sin_addr, sizeof(sa.sin_addr));
+            address.get_raw(&sa.sin_addr, sizeof(sa.sin_addr));
 
             connected = (::connect(m_node->sock, (struct sockaddr*)&sa, sizeof(sa)) >= 0);
         }
@@ -395,8 +299,7 @@ bool generic_socket::connect(const ip_address& address, unsigned short port)
             struct sockaddr_in6 sa = {0};
             sa.sin6_family  = static_cast<decltype(sa.sin6_family)>((unsigned int)address.get_family());
             sa.sin6_port    = htons(port);
-            static_cast<const ipv6_address&>(address)
-                .retrieve_platform_implementation(&sa.sin6_addr, sizeof(sa.sin6_addr));
+            address.get_raw(&sa.sin6_addr, sizeof(sa.sin6_addr));
 
             connected = (::connect(m_node->sock, (struct sockaddr*)&sa, sizeof(sa)) >= 0);
         }
@@ -456,8 +359,7 @@ bool generic_socket::listen(const ip_address& address, unsigned short port)
             struct sockaddr_in sa = {0};
             sa.sin_family   = static_cast<decltype(sa.sin_family)>((unsigned int)address.get_family());
             sa.sin_port     = htons(port);
-            static_cast<const ipv4_address&>(address)
-                .retrieve_platform_implementation(&sa.sin_addr, sizeof(sa.sin_addr));
+            address.get_raw(&sa.sin_addr, sizeof(sa.sin_addr));
 
             bound = (::bind(m_node->sock, (struct sockaddr*)&sa, sizeof(sa)) == 0);
         }
@@ -468,8 +370,7 @@ bool generic_socket::listen(const ip_address& address, unsigned short port)
             struct sockaddr_in6 sa = {0};
             sa.sin6_family  = static_cast<decltype(sa.sin6_family)>((unsigned int)address.get_family());
             sa.sin6_port    = htons(port);
-            static_cast<const ipv6_address&>(address)
-                .retrieve_platform_implementation(&sa.sin6_addr, sizeof(sa.sin6_addr));
+            address.get_raw(&sa.sin6_addr, sizeof(sa.sin6_addr));
 
             bound = (::bind(m_node->sock, (struct sockaddr*)&sa, sizeof(sa)) == 0);
         }
@@ -668,14 +569,14 @@ bool generic_socket::accept(generic_socket& accepted)
 
 internet_protocol_t generic_socket::get_internet_protocol() const
 {
-    return m_node ? from_api_family(m_node->config.af) : (internet_protocol_t)-1;
+    return m_node ? tools::from_api_family(m_node->config.af) : (internet_protocol_t)-1;
 }
 
 //------------------------------------------------------------------------------
 
 transport_protocol_t generic_socket::get_transport_protocol() const
 {
-    return m_node ? from_protocol(m_node->config.proto) : (transport_protocol_t)-1;
+    return m_node ? tools::from_protocol(m_node->config.proto) : (transport_protocol_t)-1;
 }
 
 //------------------------------------------------------------------------------
