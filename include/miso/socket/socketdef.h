@@ -64,8 +64,9 @@ public:
 private:
     ip_address(int af, const char*) throw();
     ip_address(int af, const std::string&) throw();
-    ip_address(const void* inx_addr, size_t addrlen) throw();
-    bool set_raw(const void* inx_addr, size_t addrlen) throw();
+    ip_address(int af, const void* inx_addr, size_t addrlen) throw();
+    bool set_storage(const void* sockaddr, size_t addrlen) throw();
+    bool set_raw(int af, const void* inx_addr, size_t addrlen) throw();
     bool get_raw(void* inx_addr, size_t addrlen) const throw();
 
     friend class generic_socket;

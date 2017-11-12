@@ -16,14 +16,14 @@ namespace miso {
 
 ip_address ipv4_address::any()
 {
-    return ip_address(&::in4addr_any, sizeof(struct ::in_addr));
+    return ip_address(AF_INET, &::in4addr_any, sizeof(struct ::in_addr));
 }
 
 //------------------------------------------------------------------------------
 
 ip_address ipv6_address::any()
 {
-    return ip_address(&::in6addr_any, sizeof(struct ::in6_addr));
+    return ip_address(AF_INET6, &::in6addr_any, sizeof(struct ::in6_addr));
 }
 
 //------------------------------------------------------------------------------
@@ -157,34 +157,13 @@ struct generic_socket::node
 
     inline bool export_peer(ip_address* addr, unsigned short* port) const throw()
     {
-        switch (config.af)
-        {
-            default: break;
-            case AF_INET:
-            {
-                struct ::sockaddr_storage ss;
-                ::socklen_t sl = sizeof(::sockaddr_storage);
-                if (::getpeername(sock, (struct ::sockaddr*)&ss, &sl) < 0) return false;
-                bool ok = true;
-                if (addr && !addr->set_raw(&ss, sl)) ok = false;
-                if (port) *port = ntohs(((struct ::sockaddr_in*)&ss)->sin_port);
-                return ok;
-            }
-            break;
-
-            case AF_INET6:
-            {
-                struct ::sockaddr_storage ss;
-                ::socklen_t sl = sizeof(::sockaddr_storage);
-                if (::getpeername(sock, (struct ::sockaddr*)&ss, &sl) < 0) return false;
-                bool ok = true;
-                if (addr && !addr->set_raw(&ss, sl)) ok = false;
-                if (port) *port = ntohs(((struct ::sockaddr_in6*)&ss)->sin6_port);
-                return ok;
-            }
-            break;
-        }
-        return false;
+        struct ::sockaddr_storage ss;
+        ::socklen_t sl = sizeof(::sockaddr_storage);
+        if (::getpeername(sock, (struct ::sockaddr*)&ss, &sl) < 0) return false;
+        bool ok = true;
+        if (addr && !addr->set_storage(&ss, sl)) ok = false;
+        if (port) *port = ntohs(((struct ::sockaddr_in*)&ss)->sin_port);
+        return ok;
     }
 };
 

@@ -75,14 +75,14 @@ inline void delete_ia(int& af, void*& ia) throw()
 //------------------------------------------------------------------------------
 
 template<typename inx_addr>
-inline void set_ia(void*& ia, void* other_ia) throw()
+inline void set_ia(void*& ia, const void* other_ia) throw()
 {
     ia = new inx_addr(*(inx_addr*)other_ia);
 }
 
 //------------------------------------------------------------------------------
 
-inline void set_ia(int af, void*& ia, void* other_ia) throw()
+inline void set_ia(int af, void*& ia, const void* other_ia) throw()
 {
     switch (af)
     {
@@ -214,35 +214,46 @@ ip_address::ip_address(int af, const std::string& ip_str) throw()
 
 //------------------------------------------------------------------------------
 
-ip_address::ip_address(const void* inx_addr, size_t addrlen) throw()
-    : af(AF_UNSPEC)
+ip_address::ip_address(int af, const void* inx_addr, size_t addrlen) throw()
+    : af(af)
     , ia(nullptr)
 {
-    set_raw(inx_addr, addrlen);
+    set_raw(af, inx_addr, addrlen);
 }
 
 //------------------------------------------------------------------------------
 
-bool ip_address::set_raw(const void* addr, size_t addrlen) throw()
+bool ip_address::set_storage(const void* sockaddr, size_t addrlen) throw()
 {
-    int other_af = ((::sockaddr_storage*)addr)->ss_family;
+    const int other_af = ((struct ::sockaddr_storage*)sockaddr)->ss_family;
+    switch (other_af)
+    {
+        default: break;
+        case AF_INET: return set_raw(AF_INET, &((struct ::sockaddr_in*)sockaddr)->sin_addr, sizeof(in_addr));
+        case AF_INET6: return set_raw(AF_INET, &((struct ::sockaddr_in6*)sockaddr)->sin6_addr, sizeof(in6_addr));
+    }
+    return false;
+}
+
+//------------------------------------------------------------------------------
+
+bool ip_address::set_raw(int other_af, const void* addr, size_t addrlen) throw()
+{
     switch (other_af)
     {
         default: return false;
         case AF_INET:
-        {
             delete_ia(af, ia);
-            set_ia<struct ::in_addr>(ia, &((::sockaddr_in6*)addr)->sin6_addr);
-        }
-        break;
-
+            if (addrlen < sizeof(struct ::in_addr)) return false;
+            set_ia<struct ::in_addr>(ia, addr);
+            break;
         case AF_INET6:
-        {
             delete_ia(af, ia);
-            set_ia<struct ::in6_addr>(ia, &((::sockaddr_in6*)addr)->sin6_addr);
-        }
-        break;
+            if (addrlen < sizeof(struct ::in6_addr)) return false;
+            set_ia<struct ::in6_addr>(ia, addr);
+            break;
     }
+
     af = other_af;
     return true;
 }
