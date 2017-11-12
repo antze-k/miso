@@ -14,17 +14,12 @@
 namespace miso {
 //------------------------------------------------------------------------------
 
-ip_address ipv4_address::any()
-{
-    return ip_address(AF_INET, &::in4addr_any, sizeof(struct ::in_addr));
-}
-
-//------------------------------------------------------------------------------
-
-ip_address ipv6_address::any()
-{
-    return ip_address(AF_INET6, &::in6addr_any, sizeof(struct ::in6_addr));
-}
+ip_address ipv4_address::create(const char* ip_str) { return ip_address(AF_INET, ip_str); }
+ip_address ipv4_address::create(const std::string& ip_str) { return ip_address(AF_INET, ip_str); }
+ip_address ipv4_address::any() { return ip_address(AF_INET, &::in4addr_any, sizeof(struct ::in_addr)); }
+ip_address ipv6_address::create(const char* ip_str) { return ip_address(AF_INET6, ip_str); }
+ip_address ipv6_address::create(const std::string& ip_str) { return ip_address(AF_INET6, ip_str); }
+ip_address ipv6_address::any() { return ip_address(AF_INET6, &::in6addr_any, sizeof(struct ::in6_addr)); }
 
 //------------------------------------------------------------------------------
 
