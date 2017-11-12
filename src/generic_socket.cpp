@@ -157,9 +157,6 @@ struct generic_socket::node
 
     inline bool export_peer(ip_address* addr, unsigned short* port) const throw()
     {
-        if (addr && addr->get_family() != config.af)
-            return false;
-
         switch (config.af)
         {
             default: break;

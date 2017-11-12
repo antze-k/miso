@@ -98,6 +98,13 @@ inline void set_ia(int af, void*& ia, void* other_ia) throw()
 namespace miso {
 //------------------------------------------------------------------------------
 
+ip_address::ip_address() throw()
+    : af(AF_UNSPEC)
+    , ia(nullptr)
+{}
+
+//------------------------------------------------------------------------------
+
 ip_address::~ip_address() throw()
 {
     delete_ia_fast(af, ia);
@@ -171,13 +178,6 @@ std::string ip_address::to_string() const throw()
 
     return {};
 }
-
-//------------------------------------------------------------------------------
-
-ip_address::ip_address() throw()
-    : af(AF_UNSPEC)
-    , ia(nullptr)
-{}
 
 //------------------------------------------------------------------------------
 

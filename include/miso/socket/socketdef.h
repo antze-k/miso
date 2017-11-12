@@ -47,6 +47,7 @@ enum socket_error_t
 class ip_address
 {
 public:
+    ip_address() throw();
     ~ip_address() throw();
 
     ip_address(const ip_address&) throw();
@@ -61,7 +62,6 @@ public:
     inline bool is_valid() const { return ia != nullptr; }
 
 private:
-    ip_address() throw();
     ip_address(int af, const char*) throw();
     ip_address(int af, const std::string&) throw();
     ip_address(const void* inx_addr, size_t addrlen) throw();
