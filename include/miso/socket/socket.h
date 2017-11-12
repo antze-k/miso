@@ -7,39 +7,10 @@
 namespace miso {
 //------------------------------------------------------------------------------
 
-template<transport_protocol_t transport_protocol>
-class socket : public generic_socket
-{
-public:
-    inline socket() throw() { configure(ipv4, transport_protocol, nonblocking); }
-};
-
-//------------------------------------------------------------------------------
-
-template<transport_protocol_t transport_protocol>
-class socket_sync : public generic_socket
-{
-public:
-    inline socket_sync() throw() { configure(ipv4, transport_protocol, blocking); }
-};
-
-//------------------------------------------------------------------------------
-
-template<transport_protocol_t transport_protocol>
-class ipv6socket : public generic_socket
-{
-public:
-    inline ipv6socket() throw() { configure(ipv6, transport_protocol, nonblocking); }
-};
-
-//------------------------------------------------------------------------------
-
-template<transport_protocol_t transport_protocol>
-class ipv6socket_sync : public generic_socket
-{
-public:
-    inline ipv6socket_sync() throw() { configure(ipv6, transport_protocol, blocking); }
-};
+template<transport_protocol_t transport_protocol> inline generic_socket socket() { generic_socket s; s.configure(ipv4, transport_protocol, nonblocking); return s; }
+template<transport_protocol_t transport_protocol> inline generic_socket socket_sync() { generic_socket s; s.configure(ipv4, transport_protocol, blocking); return s; }
+template<transport_protocol_t transport_protocol> inline generic_socket ipv6socket() { generic_socket s; s.configure(ipv6, transport_protocol, nonblocking); return s; }
+template<transport_protocol_t transport_protocol> inline generic_socket ipv6socket_sync() { generic_socket s; s.configure(ipv6, transport_protocol, blocking); return s; }
 
 //------------------------------------------------------------------------------
 }
