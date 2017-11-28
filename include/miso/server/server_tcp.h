@@ -24,6 +24,8 @@ public:
 
         size_t app_input_buffer_size    = default_app_buffer_size;
         size_t app_output_buffer_size   = default_app_buffer_size;
+
+        inline configuration() throw() {}
     };
 
 public:
