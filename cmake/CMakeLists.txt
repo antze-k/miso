@@ -17,6 +17,7 @@ define_source_files(socket)
 define_source_files(client)
 define_source_files(server)
 define_source_files(protocol)
+define_source_files(dns)
 
 list(APPEND SOURCE_FILES
     "${CMAKE_CURRENT_SOURCE_DIR}/../include/miso/platform.h"

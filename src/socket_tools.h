@@ -10,6 +10,7 @@
 #if defined(WIN32)
     #include <WinSock2.h>
     #include <ws2ipdef.h>
+    #include <ws2tcpip.h>
     using internal_socket_t = SOCKET;
     using socklen_t = int;
     #define _SOCKERROR()    WSAGetLastError()

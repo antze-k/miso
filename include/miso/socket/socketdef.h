@@ -72,6 +72,7 @@ private:
     friend class generic_socket;
     friend struct ipv4_address;
     friend struct ipv6_address;
+    friend struct dns;
 
 private:
     int af;
