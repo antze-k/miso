@@ -413,17 +413,19 @@ bool generic_socket::proceed(int wait_timeout_ms)
     if (m_node->config.socket_mode == blocking)
         return _report(error_not_connected);
 
-    fd_set wfds;
+    fd_set wfds, xfds;
     FD_ZERO(&wfds);
+    FD_ZERO(&xfds);
     FD_SET(m_node->sock, &wfds);
+    FD_SET(m_node->sock, &xfds);
 
     int selected = 0;
     if (wait_timeout_ms < 0)  // as long as possible
     {
         #if defined(WIN32)
-            selected = select(0, 0, &wfds, 0, 0);
+            selected = select(0, 0, &wfds, &xfds, 0);
         #else
-            selected = select(((int)m_node->sock) + 1, 0, &wfds, 0, 0);
+            selected = select(((int)m_node->sock) + 1, 0, &wfds, &xfds, 0);
         #endif
     }
     else
@@ -433,9 +435,9 @@ bool generic_socket::proceed(int wait_timeout_ms)
         wait_time.tv_usec   = wait_timeout_ms % 1000;
 
         #if defined(WIN32)
-            selected = select(0, 0, &wfds, 0, &wait_time);
+            selected = select(0, 0, &wfds, &xfds, &wait_time);
         #else
-            selected = select(((int)m_node->sock) + 1, 0, &wfds, 0, &wait_time);
+            selected = select(((int)m_node->sock) + 1, 0, &wfds, &xfds, &wait_time);
         #endif
     }
 
