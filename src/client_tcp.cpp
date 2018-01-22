@@ -127,7 +127,7 @@ std::uint16_t client_tcp::recv_raw(void* data, std::uint16_t size)
 
 //------------------------------------------------------------------------------
 
-bool client_tcp::send_message(const std::string& message)
+bool client_tcp::send_message(const std::vector<std::uint8_t>& message)
 {
     if (!m_data || !m_app_protocol)
         return false;
@@ -143,6 +143,16 @@ bool client_tcp::send_message(const std::string& message)
 
 //------------------------------------------------------------------------------
 
+bool client_tcp::send_message_cstr(const char* message)
+{
+    std::vector<std::uint8_t> message_vector(::strlen(message));
+    if (!message_vector.empty())
+        ::memcpy(&message_vector.front(), message, message_vector.size());
+    return send_message(message_vector);
+}
+
+//------------------------------------------------------------------------------
+
 size_t client_tcp::get_message_count() const
 {
     return m_data ? m_data->in_messages.size() : 0;
@@ -150,9 +160,9 @@ size_t client_tcp::get_message_count() const
 
 //------------------------------------------------------------------------------
 
-const std::string& client_tcp::get_message(size_t index) const
+const std::vector<std::uint8_t>& client_tcp::get_message(size_t index) const
 {
-    static const std::string invalid_message;
+    static const std::vector<std::uint8_t> invalid_message;
     return (!m_data && index >= m_data->in_messages.size()) ? invalid_message : m_data->in_messages[index].second;
 }
 

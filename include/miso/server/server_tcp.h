@@ -6,6 +6,7 @@
 #include "miso/server/server_interface.h"
 
 #include <utility>
+#include <vector>
 
 namespace miso {
 //------------------------------------------------------------------------------
@@ -43,7 +44,8 @@ public:
     virtual bool send_raw(client_id id, const void* data, std::uint16_t size) override;
     virtual std::uint16_t recv_raw(client_id id, void* data, std::uint16_t size) override;
 
-    bool send_message(client_id id, const std::string& message);
+    bool send_message(client_id id, const std::vector<std::uint8_t>& message);
+    bool send_message_cstr(client_id id, const char* message);  // method use is discouraged
 
 public:
         // persistent between update calls
@@ -59,7 +61,7 @@ public:
     client_id get_lost_client(size_t index) const;
 
     size_t get_message_count() const;
-    const std::pair<client_id, std::string>& get_message(size_t index) const;
+    const std::pair<client_id, std::vector<std::uint8_t>>& get_message(size_t index) const;
 
     generic_socket* find_socket(client_id);
 

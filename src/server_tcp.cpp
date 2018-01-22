@@ -190,7 +190,7 @@ std::uint16_t server_tcp::recv_raw(client_id id, void* data, std::uint16_t size)
 
 //------------------------------------------------------------------------------
 
-bool server_tcp::send_message(client_id id, const std::string& message)
+bool server_tcp::send_message(client_id id, const std::vector<std::uint8_t>& message)
 {
     if (!m_swarm || !m_app_protocol)
         return false;
@@ -206,6 +206,16 @@ bool server_tcp::send_message(client_id id, const std::string& message)
     found->out.top += used;
 
     return found->stream_out();
+}
+
+//------------------------------------------------------------------------------
+
+bool server_tcp::send_message_cstr(client_id id, const char* message)
+{
+    std::vector<std::uint8_t> message_vector(::strlen(message));
+    if (!message_vector.empty())
+        ::memcpy(&message_vector.front(), message, message_vector.size());
+    return send_message(id, message_vector);
 }
 
 //------------------------------------------------------------------------------
@@ -273,9 +283,9 @@ generic_socket* server_tcp::find_socket(client_id id)
 
 //------------------------------------------------------------------------------
 
-const std::pair<server_tcp::client_id, std::string>& server_tcp::get_message(size_t index) const
+const std::pair<server_tcp::client_id, std::vector<std::uint8_t>>& server_tcp::get_message(size_t index) const
 {
-    static const std::pair<client_id, std::string> invalid_message({ invalid_client(), std::string() });
+    static const std::pair<client_id, std::vector<std::uint8_t>> invalid_message({invalid_client(), std::vector<std::uint8_t>()});
     return (!m_swarm && index >= m_swarm->in_messages.size()) ? invalid_message : m_swarm->in_messages[index];
 }
 

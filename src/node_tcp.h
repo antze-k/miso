@@ -49,7 +49,7 @@ struct app_buffer
 
 //------------------------------------------------------------------------------
 
-using in_message = std::pair<server_interface::client_id, std::string>;
+using in_message = std::pair<server_interface::client_id, std::vector<std::uint8_t>>;
 
 //------------------------------------------------------------------------------
 
@@ -90,7 +90,7 @@ struct node_tcp
             return true;
 
         size_t used;
-        std::string message;
+        std::vector<std::uint8_t> message;
         while (protocol->pop_in_message(&in.buf[0], in.top, used, message))
         {
             in_messages.emplace_back(id, message);

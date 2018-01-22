@@ -7,6 +7,7 @@
 #include "miso/client/client_interface.h"
 
 #include <utility>
+#include <vector>
 
 namespace miso {
 //------------------------------------------------------------------------------
@@ -44,7 +45,8 @@ public:
     virtual bool send_raw(const void* data, std::uint16_t size) override;
     virtual std::uint16_t recv_raw(void* data, std::uint16_t size) override;
 
-    bool send_message(const std::string& message);
+    bool send_message(const std::vector<std::uint8_t>& message);
+    bool send_message_cstr(const char* message);  // method use is discouraged
 
 public:
         // persistent between update calls
@@ -52,7 +54,7 @@ public:
     bool is_connected() const;
 
     size_t get_message_count() const;
-    const std::string& get_message(size_t index) const;
+    const std::vector<std::uint8_t>& get_message(size_t index) const;
 
 public:
     inline ~client_tcp() { disconnect(); }
