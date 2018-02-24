@@ -4,8 +4,6 @@
 
 #include "miso/protocol/app_protocol.h"
 
-#include <stddef.h>
-
 namespace miso {
 //------------------------------------------------------------------------------
 

@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <vector>
 
+#include <stddef.h>
+
 namespace miso {
 //------------------------------------------------------------------------------
 
