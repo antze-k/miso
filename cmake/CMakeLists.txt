@@ -46,35 +46,4 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_range_for)
 
 if (WIN32)
   target_link_libraries(${PROJECT_NAME} ws2_32.lib)
-
-  if ("${CMAKE_SIZEOF_VOID_P}" STREQUAL "4")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-      ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${MY_ROOT}/lib/win32/debug"
-      ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${MY_ROOT}/lib/win32/release"
-      ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${MY_ROOT}/lib/win32/minsizerel"
-      ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MY_ROOT}/lib/win32/relwithdebinfo"
-      LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MY_ROOT}/lib/win32/debug"
-      LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MY_ROOT}/lib/win32/release"
-      LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${MY_ROOT}/lib/win32/minsizerel"
-      LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MY_ROOT}/lib/win32/relwithdebinfo"
-      RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MY_ROOT}/bin/win32/debug"
-      RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MY_ROOT}/bin/win32/release"
-      RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${MY_ROOT}/bin/win32/minsizerel"
-      RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MY_ROOT}/bin/win32/relwithdebinfo")
-  endif ()
-  if ("${CMAKE_SIZEOF_VOID_P}" STREQUAL "8")
-    set_target_properties(${PROJECT_NAME} PROPERTIES
-      ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${MY_ROOT}/lib/win64/debug"
-      ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${MY_ROOT}/lib/win64/release"
-      ARCHIVE_OUTPUT_DIRECTORY_MINSIZEREL "${MY_ROOT}/lib/win64/minsizerel"
-      ARCHIVE_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MY_ROOT}/lib/win64/relwithdebinfo"
-      LIBRARY_OUTPUT_DIRECTORY_DEBUG "${MY_ROOT}/lib/win64/debug"
-      LIBRARY_OUTPUT_DIRECTORY_RELEASE "${MY_ROOT}/lib/win64/release"
-      LIBRARY_OUTPUT_DIRECTORY_MINSIZEREL "${MY_ROOT}/lib/win64/minsizerel"
-      LIBRARY_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MY_ROOT}/lib/win64/relwithdebinfo"
-      RUNTIME_OUTPUT_DIRECTORY_DEBUG "${MY_ROOT}/bin/win64/debug"
-      RUNTIME_OUTPUT_DIRECTORY_RELEASE "${MY_ROOT}/bin/win64/release"
-      RUNTIME_OUTPUT_DIRECTORY_MINSIZEREL "${MY_ROOT}/bin/win64/minsizerel"
-      RUNTIME_OUTPUT_DIRECTORY_RELWITHDEBINFO "${MY_ROOT}/bin/win64/relwithdebinfo")
-  endif ()
 endif ()
