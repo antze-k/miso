@@ -6,7 +6,6 @@ set BUILD_DIR=%SCRIPT_DIR%vs15
 set SRC_DIR=%SCRIPT_DIR%
 
 echo Creating build directory %BUILD_DIR%
-rmdir %BUILD_DIR% /S /Q
 mkdir %BUILD_DIR%
 pushd %BUILD_DIR%
 
