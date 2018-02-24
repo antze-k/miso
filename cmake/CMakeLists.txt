@@ -47,3 +47,12 @@ target_compile_features(${PROJECT_NAME} PRIVATE cxx_range_for)
 if (WIN32)
   target_link_libraries(${PROJECT_NAME} ws2_32.lib)
 endif ()
+
+set(ARCHIVE_INSTALL_DIR "${MY_ROOT}/lib" CACHE STRING "Archive install dir")
+set(LIBRARY_INSTALL_DIR "${MY_ROOT}/lib" CACHE STRING "Library install dir")
+set(RUNTIME_INSTALL_DIR "${MY_ROOT}/bin" CACHE STRING "Runtime install dir")
+
+install(TARGETS ${PROJECT_NAME}
+    ARCHIVE DESTINATION ${ARCHIVE_INSTALL_DIR}
+    LIBRARY DESTINATION ${LIBRARY_INSTALL_DIR}
+    RUNTIME DESTINATION ${RUNTIME_INSTALL_DIR})
