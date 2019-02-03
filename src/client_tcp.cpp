@@ -37,7 +37,7 @@ bool client_tcp::connect_async(const ip_address& address, std::uint16_t port, co
     if (!s.connect(address, port) && s.get_status().error != error_none)
         return false;
 
-    return assign(std::move(s));
+    return assign(std::move(s), cfg);
 }
 
 //------------------------------------------------------------------------------
