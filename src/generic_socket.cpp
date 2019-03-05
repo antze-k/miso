@@ -175,6 +175,8 @@ generic_socket::generic_socket(generic_socket&& from)
 
 generic_socket& generic_socket::operator=(generic_socket&& from)
 {
+    if (this == &from)
+        return *this;
     delete m_node;
     m_node = from.m_node;
     m_status = from.m_status;

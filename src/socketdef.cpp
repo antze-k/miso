@@ -141,6 +141,8 @@ ip_address& ip_address::operator=(const ip_address& other) throw()
 
 ip_address& ip_address::operator=(ip_address&& from) throw()
 {
+    if (this == &from)
+        return *this;
     delete_ia(af, ia);
     af = from.af;
     ia = from.ia;
