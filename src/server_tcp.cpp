@@ -80,17 +80,21 @@ bool server_tcp::assign(generic_socket&& s, const configuration& cfg)
 
     close(true);
 
+#if !defined(MISO_DISABLE_EXCEPTIONS)
     try
+#endif
     {
         const size_t app_inbuf_size = cfg.app_input_buffer_size > 0 ? cfg.app_input_buffer_size : configuration::default_app_buffer_size;
         const size_t app_outbuf_size = cfg.app_output_buffer_size > 0 ? cfg.app_output_buffer_size : configuration::default_app_buffer_size;
         m_swarm = new swarm(std::move(s), app_inbuf_size, app_outbuf_size);
     }
+#if !defined(MISO_DISABLE_EXCEPTIONS)
     catch (std::bad_alloc&)
     {
         close(true);
         return false;
     }
+#endif
 
     if (m_swarm == nullptr)
     {

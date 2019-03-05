@@ -190,16 +190,20 @@ bool generic_socket::configure(internet_protocol_t internet_protocol, transport_
     _destroy_node();
     m_status = status();
 
+#if !defined(MISO_DISABLE_EXCEPTIONS)
     try
+#endif
     {
         m_node = new node();
     }
+#if !defined(MISO_DISABLE_EXCEPTIONS)
     catch (std::bad_alloc&)
     {
         m_node = nullptr;
         m_status.error = error_bad_alloc;
         return false;
     }
+#endif
     if (m_node == nullptr)
     {
         m_status.error = error_bad_alloc;

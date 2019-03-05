@@ -59,17 +59,21 @@ bool client_tcp::assign(generic_socket&& s, const configuration& cfg)
 
     disconnect();
 
+#if !defined(MISO_DISABLE_EXCEPTIONS)
     try
+#endif
     {
         const size_t app_inbuf_size = cfg.app_input_buffer_size > 0 ? cfg.app_input_buffer_size : configuration::default_app_buffer_size;
         const size_t app_outbuf_size = cfg.app_output_buffer_size > 0 ? cfg.app_output_buffer_size : configuration::default_app_buffer_size;
         m_data = new client_data(std::move(s), app_inbuf_size, app_outbuf_size);
     }
+#if !defined(MISO_DISABLE_EXCEPTIONS)
     catch (std::bad_alloc&)
     {
         disconnect();
         return false;
     }
+#endif
 
     if (m_data == nullptr)
     {
